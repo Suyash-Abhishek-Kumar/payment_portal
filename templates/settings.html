@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Settings - PayHub</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-payment-primary sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <i class="fas fa-wallet me-2"></i>PayHub
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <!-- Main Navigation (shown when logged in) -->
+        <ul class="navbar-nav ms-auto" id="mainNav">
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">
+              <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/transactions">
+              <i class="fas fa-exchange-alt me-1"></i> Transactions
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/transfers">
+              <i class="fas fa-paper-plane me-1"></i> Transfers
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/settings">
+              <i class="fas fa-cog me-1"></i> Settings
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user-circle me-1"></i> <span id="userName">User</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="/settings">Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="javascript:void(0);" id="logoutBtn">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+        
+        <!-- Auth Navigation (shown when logged out) -->
+        <ul class="navbar-nav ms-auto" id="authNav" style="display: none;">
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/signup">Sign Up</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Settings Content -->
+  <section class="py-5">
+    <div class="container">
+      <!-- Header -->
+      <div class="mb-4">
+        <h1>Account Settings</h1>
+        <p class="text-muted">Manage your profile and preferences</p>
+      </div>
+      
+      <!-- Settings Navigation Tabs -->
+      <ul class="nav nav-tabs mb-4" id="settingsTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="true">
+            <i class="fas fa-user me-1"></i> Profile
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-tab-pane" type="button" role="tab" aria-controls="security-tab-pane" aria-selected="false">
+            <i class="fas fa-shield-alt me-1"></i> Security
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications-tab-pane" type="button" role="tab" aria-controls="notifications-tab-pane" aria-selected="false">
+            <i class="fas fa-bell me-1"></i> Notifications
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="appearance-tab" data-bs-toggle="tab" data-bs-target="#appearance-tab-pane" type="button" role="tab" aria-controls="appearance-tab-pane" aria-selected="false">
+            <i class="fas fa-paint-brush me-1"></i> Appearance
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="payment-methods-tab" data-bs-toggle="tab" data-bs-target="#payment-methods-tab-pane" type="button" role="tab" aria-controls="payment-methods-tab-pane" aria-selected="false">
+            <i class="fas fa-credit-card me-1"></i> Payment Methods
+          </button>
+        </li>
+      </ul>
+      
+      <!-- Tab Content -->
+      <div class="tab-content" id="settingsTabsContent">
+        <!-- Profile Tab -->
+        <div class="tab-pane fade show active" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+          <div class="settings-section">
+            <h4 class="settings-title">Personal Information</h4>
+            
+            <!-- Success/Error Messages -->
+            <div class="alert alert-success" id="profileSuccessMsg" style="display: none;">
+              <i class="fas fa-check-circle"></i> Profile updated successfully!
+            </div>
+            <div class="error-message" id="profileErrorMsg" style="display: none;"></div>
+            
+            <form id="profileForm">
+              <div class="row mb-3">
+                <div class="col-md-6 mb-3 mb-md-0">
+                  <label for="profileName" class="form-label">Full Name</label>
+                  <input type="text" class="form-control" id="profileName" placeholder="John Doe" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="profileEmail" class="form-label">Email Address</label>
+                  <input type="email" class="form-control" id="profileEmail" placeholder="john@example.com" required>
+                </div>
+              </div>
+              
+              <div class="row mb-3">
+                <div class="col-md-6 mb-3 mb-md-0">
+                  <label for="profilePhone" class="form-label">Phone Number</label>
+                  <input type="tel" class="form-control" id="profilePhone" placeholder="(123) 456-7890">
+                </div>
+                <div class="col-md-6">
+                  <label for="profileDOB" class="form-label">Date of Birth</label>
+                  <input type="date" class="form-control" id="profileDOB">
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="profileAddress" class="form-label">Address</label>
+                <textarea class="form-control" id="profileAddress" rows="3" placeholder="Your full address"></textarea>
+              </div>
+              
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="submit" class="btn btn-payment-primary">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        
+        <!-- Security Tab -->
+        <div class="tab-pane fade" id="security-tab-pane" role="tabpanel" aria-labelledby="security-tab" tabindex="0">
+          <div class="settings-section">
+            <h4 class="settings-title">Change Password</h4>
+            
+            <!-- Success/Error Messages -->
+            <div class="alert alert-success" id="passwordSuccessMsg" style="display: none;">
+              <i class="fas fa-check-circle"></i> Password updated successfully!
+            </div>
+            <div class="error-message" id="passwordErrorMsg" style="display: none;"></div>
+            
+            <form id="passwordForm">
+              <div class="mb-3">
+                <label for="currentPassword" class="form-label">Current Password</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="currentPassword" required>
+                  <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('currentPassword')">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="newPassword" class="form-label">New Password</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="newPassword" required>
+                  <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('newPassword')">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+                <div class="progress mt-2" style="height: 5px;">
+                  <div class="progress-bar bg-danger" id="passwordStrength" style="width: 0%"></div>
+                </div>
+                <small class="form-text text-muted">Password must be at least 8 characters long.</small>
+              </div>
+              
+              <div class="mb-4">
+                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="confirmPassword" required>
+                  <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('confirmPassword')">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="submit" class="btn btn-payment-primary">Update Password</button>
+              </div>
+            </form>
+          </div>
+          
+          <div class="settings-section mt-4">
+            <h4 class="settings-title">Two-Factor Authentication</h4>
+            
+            <div class="mb-3">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="enable2FA">
+                <label class="form-check-label" for="enable2FA">Enable Two-Factor Authentication</label>
+              </div>
+              <small class="form-text text-muted">Adds an extra layer of security to your account by requiring a verification code in addition to your password.</small>
+            </div>
+            
+            <div id="twoFactorSetup" class="collapse">
+              <div class="card bg-light p-3 mb-3">
+                <h5>Setup Instructions</h5>
+                <ol>
+                  <li>Download an authenticator app like Google Authenticator or Authy</li>
+                  <li>Scan the QR code with your app</li>
+                  <li>Enter the 6-digit verification code from the app</li>
+                </ol>
+                
+                <div class="text-center my-3">
+                  <div class="border d-inline-block p-3">
+                    <i class="fas fa-qrcode fa-5x"></i>
+                    <p class="mt-2 mb-0">QR Code Placeholder</p>
+                  </div>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="verificationCode" class="form-label">Verification Code</label>
+                  <input type="text" class="form-control" id="verificationCode" placeholder="Enter 6-digit code">
+                </div>
+                
+                <button type="button" class="btn btn-payment-primary">Verify & Activate</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="settings-section mt-4">
+            <h4 class="settings-title">Login Sessions</h4>
+            
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Device</th>
+                    <th>Location</th>
+                    <th>Last Activity</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><i class="fas fa-laptop me-2"></i> Windows PC - Chrome</td>
+                    <td>New York, USA</td>
+                    <td>Current Session</td>
+                    <td><span class="badge bg-success">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td><i class="fas fa-mobile-alt me-2"></i> iPhone - Safari</td>
+                    <td>New York, USA</td>
+                    <td>2 days ago</td>
+                    <td><button class="btn btn-sm btn-danger">Logout</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <button class="btn btn-outline-danger">Logout From All Devices</button>
+          </div>
+        </div>
+        
+        <!-- Notifications Tab -->
+        <div class="tab-pane fade" id="notifications-tab-pane" role="tabpanel" aria-labelledby="notifications-tab" tabindex="0">
+          <div class="settings-section">
+            <h4 class="settings-title">Notification Preferences</h4>
+            
+            <!-- Success Message -->
+            <div class="alert alert-success" id="notificationSuccessMsg" style="display: none;">
+              <i class="fas fa-check-circle"></i> Notification preferences updated successfully!
+            </div>
+            
+            <form id="notificationForm">
+              <div class="mb-4">
+                <h5>Email Notifications</h5>
+                
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                  <label class="form-check-label" for="emailNotifications">
+                    Receive email notifications
+                  </label>
+                </div>
+                
+                <div class="ms-4">
+                  <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="emailTransfers" checked>
+                    <label class="form-check-label" for="emailTransfers">
+                      Money transfers and payments
+                    </label>
+                  </div>
+                  
+                  <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="emailSecurity" checked>
+                    <label class="form-check-label" for="emailSecurity">
+                      Security alerts
+                    </label>
+                  </div>
+                  
+                  <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="emailPromotions">
+                    <label class="form-check-label" for="emailPromotions">
+                      Promotions and offers
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <h5>SMS Notifications</h5>
+                
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="smsNotifications">
+                  <label class="form-check-label" for="smsNotifications">
+                    Receive SMS notifications
+                  </label>
+                </div>
+                
+                <div class="ms-4">
+                  <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="smsTransfers">
+                    <label class="form-check-label" for="smsTransfers">
+                      Money transfers and payments
+                    </label>
+                  </div>
+                  
+                  <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="smsSecurity">
+                    <label class="form-check-label" for="smsSecurity">
+                      Security alerts
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <h5>Push Notifications</h5>
+                
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" id="pushNotifications" checked>
+                  <label class="form-check-label" for="pushNotifications">
+                    Receive push notifications
+                  </label>
+                </div>
+                
+                <div class="ms-4">
+                  <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="pushTransfers" checked>
+                    <label class="form-check-label" for="pushTransfers">
+                      Money transfers and payments
+                    </label>
+                  </div>
+                  
+                  <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="pushSecurity" checked>
+                    <label class="form-check-label" for="pushSecurity">
+                      Security alerts
+                    </label>
+                  </div>
+                  
+                  <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="pushPromotions">
+                    <label class="form-check-label" for="pushPromotions">
+                      Promotions and offers
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="submit" class="btn btn-payment-primary">Save Preferences</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        
+        <!-- Appearance Tab -->
+        <div class="tab-pane fade" id="appearance-tab-pane" role="tabpanel" aria-labelledby="appearance-tab" tabindex="0">
+          <div class="settings-section">
+            <h4 class="settings-title">Display Settings</h4>
+            
+            <!-- Success Message -->
+            <div class="alert alert-success" id="appearanceSuccessMsg" style="display: none;">
+              <i class="fas fa-check-circle"></i> Appearance settings updated successfully!
+            </div>
+            
+            <form id="appearanceForm">
+              <div class="mb-4">
+                <label for="themeColor" class="form-label">Theme Color</label>
+                <select class="form-select" id="themeColor">
+                  <option value="default">Default Blue</option>
+                  <option value="green">Green</option>
+                  <option value="purple">Purple</option>
+                  <option value="orange">Orange</option>
+                </select>
+              </div>
+              
+              <div class="mb-4">
+                <label for="fontSize" class="form-label">Font Size</label>
+                <select class="form-select" id="fontSize">
+                  <option value="small">Small</option>
+                  <option value="medium" selected>Medium (Default)</option>
+                  <option value="large">Large</option>
+                  <option value="extra-large">Extra Large</option>
+                </select>
+              </div>
+              
+              <div class="mb-4">
+                <label class="form-label">Theme Mode</label>
+                <div class="d-flex gap-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="themeMode" id="lightMode" value="light" checked>
+                    <label class="form-check-label" for="lightMode">
+                      Light
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="themeMode" id="darkMode" value="dark">
+                    <label class="form-check-label" for="darkMode">
+                      Dark
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="themeMode" id="systemMode" value="system">
+                    <label class="form-check-label" for="systemMode">
+                      System default
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="submit" class="btn btn-payment-primary">Save Settings</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        
+        <!-- Payment Methods Tab -->
+        <div class="tab-pane fade" id="payment-methods-tab-pane" role="tabpanel" aria-labelledby="payment-methods-tab" tabindex="0">
+          <div class="settings-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4 class="mb-0">Your Payment Methods</h4>
+              <button class="btn btn-payment-primary" data-bs-toggle="modal" data-bs-target="#addPaymentMethodModal">
+                <i class="fas fa-plus me-1"></i> Add New
+              </button>
+            </div>
+            
+            <!-- Payment Methods List -->
+            <div class="row">
+              <!-- Credit Card -->
+              <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <div>
+                        <i class="fab fa-cc-visa fa-2x text-primary me-2"></i>
+                        <span class="fw-bold">•••• 4521</span>
+                      </div>
+                      <div class="dropdown">
+                        <button class="btn btn-sm btn-link" type="button" data-bs-toggle="dropdown">
+                          <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li>
+                          <li><a class="dropdown-item text-danger" href="javascript:void(0);">Remove</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                    <p class="card-text">Expires: 05/2025</p>
+                    <span class="badge bg-success">Primary</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Bank Account -->
+              <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <div>
+                        <i class="fas fa-university fa-2x text-secondary me-2"></i>
+                        <span class="fw-bold">Bank of America</span>
+                      </div>
+                      <div class="dropdown">
+                        <button class="btn btn-sm btn-link" type="button" data-bs-toggle="dropdown">
+                          <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li>
+                          <li><a class="dropdown-item text-danger" href="javascript:void(0);">Remove</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                    <p class="card-text">Account: •••• 7890</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Add Payment Method Modal -->
+  <div class="modal fade" id="addPaymentMethodModal" tabindex="-1" aria-labelledby="addPaymentMethodModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addPaymentMethodModalLabel">Add Payment Method</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="nav nav-pills mb-3" id="paymentMethodTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="credit-card-tab" data-bs-toggle="pill" data-bs-target="#credit-card-tab-pane" type="button" role="tab" aria-controls="credit-card-tab-pane" aria-selected="true">Credit Card</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="bank-account-tab" data-bs-toggle="pill" data-bs-target="#bank-account-tab-pane" type="button" role="tab" aria-controls="bank-account-tab-pane" aria-selected="false">Bank Account</button>
+            </li>
+          </ul>
+          <div class="tab-content" id="paymentMethodTabsContent">
+            <div class="tab-pane fade show active" id="credit-card-tab-pane" role="tabpanel" aria-labelledby="credit-card-tab" tabindex="0">
+              <form id="creditCardForm">
+                <div class="mb-3">
+                  <label for="cardNumber" class="form-label">Card Number</label>
+                  <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456">
+                </div>
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <label for="expiryDate" class="form-label">Expiry Date</label>
+                    <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY">
+                  </div>
+                  <div class="col-6">
+                    <label for="cvv" class="form-label">CVV</label>
+                    <input type="text" class="form-control" id="cvv" placeholder="123">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="cardName" class="form-label">Name on Card</label>
+                  <input type="text" class="form-control" id="cardName" placeholder="John Doe">
+                </div>
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="setAsPrimary" checked>
+                  <label class="form-check-label" for="setAsPrimary">
+                    Set as primary payment method
+                  </label>
+                </div>
+              </form>
+            </div>
+            <div class="tab-pane fade" id="bank-account-tab-pane" role="tabpanel" aria-labelledby="bank-account-tab" tabindex="0">
+              <form id="bankAccountForm">
+                <div class="mb-3">
+                  <label for="bankName" class="form-label">Bank Name</label>
+                  <input type="text" class="form-control" id="bankName" placeholder="Bank of America">
+                </div>
+                <div class="mb-3">
+                  <label for="accountNumber" class="form-label">Account Number</label>
+                  <input type="text" class="form-control" id="accountNumber" placeholder="123456789">
+                </div>
+                <div class="mb-3">
+                  <label for="routingNumber" class="form-label">Routing Number</label>
+                  <input type="text" class="form-control" id="routingNumber" placeholder="123456789">
+                </div>
+                <div class="mb-3">
+                  <label for="accountType" class="form-label">Account Type</label>
+                  <select class="form-select" id="accountType">
+                    <option value="checking">Checking</option>
+                    <option value="savings">Savings</option>
+                  </select>
+                </div>
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="bankSetAsPrimary">
+                  <label class="form-check-label" for="bankSetAsPrimary">
+                    Set as primary payment method
+                  </label>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-payment-primary">Add Payment Method</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="py-4 bg-dark text-white">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 mb-3 mb-md-0">
+          <p class="mb-0">&copy; 2023 PayHub. All rights reserved.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <a href="javascript:void(0);" class="text-white me-3">Privacy Policy</a>
+          <a href="javascript:void(0);" class="text-white me-3">Terms of Service</a>
+          <a href="javascript:void(0);" class="text-white">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/settings.js"></script>
+  <script src="/static/js/main.js"></script>
+  
+  <script>
+    // Toggle password visibility
+    function togglePasswordVisibility(inputId) {
+      const passwordInput = document.getElementById(inputId);
+      const icon = event.currentTarget.querySelector('i');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    }
+    
+    // Toggle 2FA setup
+    document.addEventListener('DOMContentLoaded', function() {
+      const enable2FA = document.getElementById('enable2FA');
+      const twoFactorSetup = document.getElementById('twoFactorSetup');
+      
+      if (enable2FA && twoFactorSetup) {
+        enable2FA.addEventListener('change', function() {
+          if (this.checked) {
+            twoFactorSetup.classList.add('show');
+          } else {
+            twoFactorSetup.classList.remove('show');
+          }
+        });
+      }
+      
+      // Password strength indicator
+      const newPassword = document.getElementById('newPassword');
+      if (newPassword) {
+        newPassword.addEventListener('input', function() {
+          const password = this.value;
+          let strength = 0;
+          
+          // Check length
+          if (password.length >= 8) {
+            strength += 1;
+          }
+          
+          // Check for numbers
+          if (/\d/.test(password)) {
+            strength += 1;
+          }
+          
+          // Check for uppercase
+          if (/[A-Z]/.test(password)) {
+            strength += 1;
+          }
+          
+          // Check for special characters
+          if (/[^A-Za-z0-9]/.test(password)) {
+            strength += 1;
+          }
+          
+          // Update password strength indicator
+          const strengthIndicator = document.getElementById('passwordStrength');
+          if (strengthIndicator) {
+            switch(strength) {
+              case 0:
+                strengthIndicator.className = 'progress-bar bg-danger';
+                strengthIndicator.style.width = '10%';
+                break;
+              case 1:
+                strengthIndicator.className = 'progress-bar bg-danger';
+                strengthIndicator.style.width = '25%';
+                break;
+              case 2:
+                strengthIndicator.className = 'progress-bar bg-warning';
+                strengthIndicator.style.width = '50%';
+                break;
+              case 3:
+                strengthIndicator.className = 'progress-bar bg-info';
+                strengthIndicator.style.width = '75%';
+                break;
+              case 4:
+                strengthIndicator.className = 'progress-bar bg-success';
+                strengthIndicator.style.width = '100%';
+                break;
+            }
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PayHub - Modern Online Payment Solution</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-payment-primary sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <i class="fas fa-wallet me-2"></i>PayHub
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <!-- Main Navigation (shown when logged in) -->
+        <ul class="navbar-nav ms-auto" id="mainNav" style="display: none;">
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">
+              <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/transactions">
+              <i class="fas fa-exchange-alt me-1"></i> Transactions
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/transfers">
+              <i class="fas fa-paper-plane me-1"></i> Transfers
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/settings">
+              <i class="fas fa-cog me-1"></i> Settings
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user-circle me-1"></i> <span id="userName">User</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="/settings">Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="javascript:void(0);" id="logoutBtn">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+        
+        <!-- Auth Navigation (shown when logged out) -->
+        <ul class="navbar-nav ms-auto" id="authNav">
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/signup">Sign Up</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6">
+          <h1 class="display-4 fw-bold mb-4">Banking Made Simple</h1>
+          <p class="lead mb-4">Manage your money, make transfers, and track your spending all in one place with our secure online payment platform.</p>
+          <div class="d-grid gap-2 d-md-flex">
+            <a href="/signup" class="btn btn-light btn-lg px-4 me-md-2">Get Started</a>
+            <a href="#features" class="btn btn-outline-light btn-lg px-4">Learn More</a>
+          </div>
+        </div>
+        <div class="col-lg-6 d-none d-lg-block">
+          <div class="text-center">
+            <i class="fas fa-credit-card" style="font-size: 15rem; opacity: 0.8;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-5" id="features">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold">Why Choose PayHub?</h2>
+        <p class="text-muted">Our platform offers everything you need to manage your finances</p>
+      </div>
+      
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="feature-card text-center h-100">
+            <i class="fas fa-shield-alt feature-icon"></i>
+            <h3>Secure Payments</h3>
+            <p>Our platform uses state-of-the-art encryption to ensure your transactions are always secure.</p>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="feature-card text-center h-100">
+            <i class="fas fa-bolt feature-icon"></i>
+            <h3>Instant Transfers</h3>
+            <p>Send money to friends, family, or businesses instantly with our fast payment network.</p>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="feature-card text-center h-100">
+            <i class="fas fa-chart-line feature-icon"></i>
+            <h3>Expense Tracking</h3>
+            <p>Monitor your spending habits with detailed transaction history and categorization.</p>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="feature-card text-center h-100">
+            <i class="fas fa-mobile-alt feature-icon"></i>
+            <h3>Mobile Friendly</h3>
+            <p>Access your account anytime, anywhere from any device with our responsive design.</p>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="feature-card text-center h-100">
+            <i class="fas fa-bell feature-icon"></i>
+            <h3>Smart Alerts</h3>
+            <p>Get notified about important account activity and never miss a payment or deposit.</p>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="feature-card text-center h-100">
+            <i class="fas fa-users feature-icon"></i>
+            <h3>Multi-User Access</h3>
+            <p>Set up multiple users with different access levels for shared accounts.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="py-5 bg-light">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold">How It Works</h2>
+        <p class="text-muted">Get started with PayHub in three simple steps</p>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <div class="text-center">
+            <div class="bg-payment-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+              <h3 class="m-0">1</h3>
+            </div>
+            <h4>Create an Account</h4>
+            <p>Sign up for free and verify your identity to get started.</p>
+          </div>
+        </div>
+        
+        <div class="col-md-4 mb-4 mb-md-0">
+          <div class="text-center">
+            <div class="bg-payment-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+              <h3 class="m-0">2</h3>
+            </div>
+            <h4>Connect Bank Account</h4>
+            <p>Link your existing bank account or add your card details.</p>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="text-center">
+            <div class="bg-payment-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+              <h3 class="m-0">3</h3>
+            </div>
+            <h4>Start Transacting</h4>
+            <p>Send money, pay bills, and manage your finances easily.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="py-5">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold">What Our Users Say</h2>
+        <p class="text-muted">Join thousands of satisfied customers</p>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+              <div class="mb-3">
+                <i class="fas fa-star text-warning"></i>
+                <i class="fas fa-star text-warning"></i>
+                <i class="fas fa-star text-warning"></i>
+                <i class="fas fa-star text-warning"></i>
+                <i class="fas fa-star text-warning"></i>
+              </div>
+              <p class="card-text">"PayHub has revolutionized how I manage my money. The interface is intuitive and transferring funds has never been easier."</p>
+              <div class="d-flex align-items-center">
+                <div class="bg-primary rounded-circle text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                  <span>JD</span>
+                </div>
+                <div>
+                  <h6 class="mb-0">James Davis</h6>
+                  <small class="text-muted">Small Business Owner</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+              <div class="mb-3">
+                <i class="fas fa-star text-warning"></i>
+                <i class="fas fa-star text-warning"></i>
+                <i class="fas fa-star text-warning"></i>
+                <i class="fas fa-star text-warning"></i>
+                <i class="fas fa-star text-warning"></i>
+              </div>
+              <p class="card-text">"The expense tracking features helped me identify areas where I was overspending. I've saved so much money since using PayHub!"</p>
+              <div class="d-flex align-items-center">
+                <div class="bg-primary rounded-circle text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                  <span>SM</span>
+                </div>
+                <div>
+                  <h6 class="mb-0">Sarah Mitchell</h6>
+                  <small class="text-muted">Financial Analyst</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+              <div class="mb-3">
+                <i class="fas fa-star text-warning"></i>
+                <i class="fas fa-star text-warning"></i>
+                <i class="fas fa-star text-warning"></i>
+                <i class="fas fa-star text-warning"></i>
+                <i class="fas fa-star-half-alt text-warning"></i>
+              </div>
+              <p class="card-text">"I was skeptical at first, but PayHub's security features gave me peace of mind. Now I recommend it to all my friends and family."</p>
+              <div class="d-flex align-items-center">
+                <div class="bg-primary rounded-circle text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                  <span>RT</span>
+                </div>
+                <div>
+                  <h6 class="mb-0">Robert Thompson</h6>
+                  <small class="text-muted">IT Specialist</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="py-5 bg-payment-primary text-white">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8 mb-4 mb-lg-0">
+          <h2 class="fw-bold">Ready to simplify your financial life?</h2>
+          <p class="lead mb-0">Join thousands of users who trust PayHub for their payment needs.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <a href="/signup" class="btn btn-light btn-lg">Get Started Today</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-4 bg-dark text-white">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5><i class="fas fa-wallet me-2"></i>PayHub</h5>
+          <p>We are committed to providing a secure, user-friendly payment platform for everyone.</p>
+          <div class="d-flex gap-3">
+            <a href="javascript:void(0);" class="text-white"><i class="fab fa-facebook-f"></i></a>
+            <a href="javascript:void(0);" class="text-white"><i class="fab fa-twitter"></i></a>
+            <a href="javascript:void(0);" class="text-white"><i class="fab fa-instagram"></i></a>
+            <a href="javascript:void(0);" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        
+        <div class="col-md-2 mb-4 mb-md-0">
+          <h5>Company</h5>
+          <ul class="list-unstyled">
+            <li><a href="javascript:void(0);" class="text-white">About Us</a></li>
+            <li><a href="javascript:void(0);" class="text-white">Careers</a></li>
+            <li><a href="javascript:void(0);" class="text-white">Press</a></li>
+            <li><a href="javascript:void(0);" class="text-white">Blog</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-2 mb-4 mb-md-0">
+          <h5>Products</h5>
+          <ul class="list-unstyled">
+            <li><a href="javascript:void(0);" class="text-white">Personal</a></li>
+            <li><a href="javascript:void(0);" class="text-white">Business</a></li>
+            <li><a href="javascript:void(0);" class="text-white">Enterprise</a></li>
+            <li><a href="javascript:void(0);" class="text-white">Partners</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-2 mb-4 mb-md-0">
+          <h5>Resources</h5>
+          <ul class="list-unstyled">
+            <li><a href="javascript:void(0);" class="text-white">Help Center</a></li>
+            <li><a href="javascript:void(0);" class="text-white">Documentation</a></li>
+            <li><a href="javascript:void(0);" class="text-white">Developers</a></li>
+            <li><a href="javascript:void(0);" class="text-white">Contact Us</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-2">
+          <h5>Legal</h5>
+          <ul class="list-unstyled">
+            <li><a href="javascript:void(0);" class="text-white">Privacy Policy</a></li>
+            <li><a href="javascript:void(0);" class="text-white">Terms of Service</a></li>
+            <li><a href="javascript:void(0);" class="text-white">Security</a></li>
+            <li><a href="javascript:void(0);" class="text-white">Cookies</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <hr class="my-4">
+      
+      <div class="row">
+        <div class="col-md-6 mb-3 mb-md-0">
+          <p class="mb-0">&copy; 2023 PayHub. All rights reserved.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <select class="form-select-sm bg-dark text-white">
+            <option selected>English (US)</option>
+            <option>Español</option>
+            <option>Français</option>
+            <option>Deutsch</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom JS -->
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/main.js"></script>
+</body>
+</html>

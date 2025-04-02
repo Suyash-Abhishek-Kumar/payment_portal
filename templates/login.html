@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - PayHub</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-payment-primary sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <i class="fas fa-wallet me-2"></i>PayHub
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <!-- Main Navigation (shown when logged in) -->
+        <ul class="navbar-nav ms-auto" id="mainNav" style="display: none;">
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">
+              <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/transactions">
+              <i class="fas fa-exchange-alt me-1"></i> Transactions
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/transfers">
+              <i class="fas fa-paper-plane me-1"></i> Transfers
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/settings">
+              <i class="fas fa-cog me-1"></i> Settings
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user-circle me-1"></i> <span id="userName">User</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="/settings">Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="javascript:void(0);" id="logoutBtn">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+        
+        <!-- Auth Navigation (shown when logged out) -->
+        <ul class="navbar-nav ms-auto" id="authNav">
+          <li class="nav-item">
+            <a class="nav-link active" href="/login">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/signup">Sign Up</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Login Section -->
+  <section class="py-5">
+    <div class="container">
+      <div class="auth-container">
+        <h2 class="text-center mb-4">Welcome Back</h2>
+        <p class="text-center text-muted mb-4">Enter your credentials to access your account</p>
+        
+        <!-- Login Form -->
+        <form id="loginForm">
+          <!-- Error message container -->
+          <div class="error-message" id="loginErrorMsg" style="display: none;"></div>
+          
+          <!-- Email input -->
+          <div class="mb-3">
+            <label for="loginEmail" class="form-label">Email address</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+              <input type="email" class="form-control" id="loginEmail" placeholder="name@example.com" required>
+            </div>
+          </div>
+          
+          <!-- Password input -->
+          <div class="mb-3">
+            <label for="loginPassword" class="form-label">Password</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-lock"></i></span>
+              <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
+              <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Remember me & forgot password -->
+          <div class="d-flex justify-content-between mb-4">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="rememberMe">
+              <label class="form-check-label" for="rememberMe">Remember me</label>
+            </div>
+            <a href="javascript:void(0);" class="text-decoration-none">Forgot password?</a>
+          </div>
+          
+          <!-- Submit button -->
+          <div class="d-grid">
+            <button type="submit" class="btn btn-payment-primary btn-lg">Login</button>
+          </div>
+        </form>
+        
+        <!-- Divider -->
+        <div class="my-4 text-center">
+          <span class="text-muted">or login with</span>
+        </div>
+        
+        <!-- Social login buttons -->
+        <div class="row gy-2">
+          <div class="col-sm-6">
+            <a href="javascript:void(0);" class="btn btn-outline-secondary d-block">
+              <i class="fab fa-google me-2"></i> Google
+            </a>
+          </div>
+          <div class="col-sm-6">
+            <a href="javascript:void(0);" class="btn btn-outline-secondary d-block">
+              <i class="fab fa-facebook-f me-2"></i> Facebook
+            </a>
+          </div>
+        </div>
+        
+        <!-- Sign up link -->
+        <div class="mt-4 text-center">
+          <span class="text-muted">Don't have an account?</span>
+          <a href="/signup" class="text-decoration-none">Sign up</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-4 bg-dark text-white">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 mb-3 mb-md-0">
+          <p class="mb-0">&copy; 2023 PayHub. All rights reserved.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <a href="javascript:void(0);" class="text-white me-3">Privacy Policy</a>
+          <a href="javascript:void(0);" class="text-white me-3">Terms of Service</a>
+          <a href="javascript:void(0);" class="text-white">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/main.js"></script>
+  
+  <script>
+    // Toggle password visibility
+    document.getElementById('togglePassword').addEventListener('click', function() {
+      const passwordInput = document.getElementById('loginPassword');
+      const icon = this.querySelector('i');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+  </script>
+</body>
+</html>
