@@ -196,5 +196,28 @@ function formatCurrency(amount) {
   }).format(amount);
 }
 
+  document.addEventListener('DOMContentLoaded', function () {
+    const pieCtx = document.getElementById('spendingPieChart').getContext('2d');
+      new Chart(pieCtx, {
+        type: 'pie',
+          data: {
+            labels: ['Food & Dining', 'Bills & Utilities', 'Transportation', 'Shopping'],
+            datasets: [{
+              data: [348.52, 280.00, 185.75, 142.99],
+              backgroundColor: ['#007bff', '#28a745', '#ffc107', '#17a2b8'],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'top'
+              }
+            }
+          }
+          });
+  });
+
 // Initialize dashboard when DOM is loaded
 document.addEventListener('DOMContentLoaded', initializeDashboard);

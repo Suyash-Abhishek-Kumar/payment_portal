@@ -221,59 +221,54 @@
       <div class="row">
         <div class="col-12 mb-4">
           <div class="dashboard-card">
-            <div class="dashboard-card-header">
-              <h5 class="mb-0">Spending Analysis</h5>
+        <div class="dashboard-card-header">
+          <h5 class="mb-0">Spending Analysis</h5>
+        </div>
+        <div class="dashboard-card-body">
+          <div class="row">
+            <!-- Left: Pie Chart -->
+            <div class="col-lg-3 mb-4 mb-lg-0">
+          <h6 class="text-muted mb-3">Monthly Overview</h6>
+          <canvas id="spendingPieChart" height="200"></canvas>
             </div>
-            <div class="dashboard-card-body">
-              <div class="row">
-                <div class="col-lg-8 mb-4 mb-lg-0">
-                  <h6 class="text-muted mb-3">Monthly overview</h6>
-                  <canvas id="spendingChart" height="250"></canvas>
-                </div>
-                <div class="col-lg-4">
-                  <h6 class="text-muted mb-3">Top spending categories</h6>
-                  <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                      <span>Food & Dining</span>
-                      <span>$348.52</span>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                      <div class="progress-bar bg-primary" style="width: 85%"></div>
-                    </div>
-                  </div>
-                  <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                      <span>Bills & Utilities</span>
-                      <span>$280.00</span>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                      <div class="progress-bar bg-success" style="width: 70%"></div>
-                    </div>
-                  </div>
-                  <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                      <span>Transportation</span>
-                      <span>$185.75</span>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                      <div class="progress-bar bg-warning" style="width: 50%"></div>
-                    </div>
-                  </div>
-                  <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                      <span>Shopping</span>
-                      <span>$142.99</span>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                      <div class="progress-bar bg-info" style="width: 35%"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <!-- Right: Spending Details -->
+            <div class="col-lg-6">
+          <h6 class="text-muted mb-5">Top Spending Categories</h6>
+          <div class="d-flex justify-content-between mb-1">
+            <span>Food & Dining</span>
+            <span>$348.52</span>
+          </div>
+          <div class="progress mb-4" style="height: 8px;">
+            <div class="progress-bar bg-primary" style="width: 85%"></div>
+          </div>
+          <div class="d-flex justify-content-between mb-1">
+            <span>Bills & Utilities</span>
+            <span>$280.00</span>
+          </div>
+          <div class="progress mb-4" style="height: 8px;">
+            <div class="progress-bar bg-success" style="width: 70%"></div>
+          </div>
+          <div class="d-flex justify-content-between mb-1">
+            <span>Transportation</span>
+            <span>$185.75</span>
+          </div>
+          <div class="progress mb-4" style="height: 8px;">
+            <div class="progress-bar bg-warning" style="width: 50%"></div>
+          </div>
+          <div class="d-flex justify-content-between mb-1">
+            <span>Shopping</span>
+            <span>$142.99</span>
+          </div>
+          <div class="progress" style="height: 8px;">
+            <div class="progress-bar bg-info" style="width: 35%"></div>
+          </div>
             </div>
           </div>
         </div>
+          </div>
+        </div>
       </div>
+  
       
       <!-- Upcoming Bills -->
       <div class="row">
