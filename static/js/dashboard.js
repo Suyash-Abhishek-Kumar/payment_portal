@@ -15,65 +15,69 @@ const sampleAccountData = {
 };
 
 // Function to initialize dashboard
+// Function to initialize dashboard
 function initializeDashboard() {
-  const currentUser = localStorage.getItem('currentUser');
-  
+  const currentUser = localStorage.getItem('currentUser'); // Get logged-in user info from localStorage
+
   if (!currentUser) {
-    window.location.href = '/login';
-    return;
+      window.location.href = '/login'; // Redirect to login if user is not logged in
+      return;
   }
-  
-  // Update account summaries
-  updateAccountSummaries();
-  
-  // Load recent transactions
+
+  const userId = JSON.parse(currentUser).id; // Assume currentUser contains user ID
+
+  // Fetch account summary data from the backend API
+  fetch(`http://127.0.0.1:5000/api/account/${userId}`)
+      .then(response => response.json())
+      .then(data => {
+          if (data.error) {
+              console.error(data.error);
+              alert("Error fetching account summary: " + data.error);
+          } else {
+              updateAccountSummaries(data); // Pass fetched data to updateAccountSummaries()
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          alert("Failed to fetch account summary.");
+      });
+
+  // Load recent transactions (this can be implemented later)
   loadRecentTransactions();
-  
-  // Initialize quick actions
-  initializeQuickActions();
-  
-  // Update spending chart
-  updateSpendingChart();
 }
 
-// Function to update account summaries
-function updateAccountSummaries() {
-  const mainBalance = document.getElementById('mainBalance');
-  const savingsBalance = document.getElementById('savingsBalance');
-  const creditUsed = document.getElementById('creditUsed');
-  const creditAvailable = document.getElementById('creditAvailable');
+// Function to update account summaries dynamically
+function updateAccountSummaries(accountData) {
+  const mainBalance = parseFloat(accountData.main_balance) || 0;
+  const savingsBalance = parseFloat(accountData.savings_balance) || 0;
+  const creditBalance = parseFloat(accountData.credit_balance) || 0;
+
+  document.getElementById('mainBalance').textContent = 
+      `$${mainBalance.toFixed(2)}`;
   
-  if (mainBalance) {
-    mainBalance.textContent = formatCurrency(sampleAccountData.balance);
-  }
+  document.getElementById('savingsBalance').textContent = 
+      `$${savingsBalance.toFixed(2)}`;
   
-  if (savingsBalance) {
-    savingsBalance.textContent = formatCurrency(sampleAccountData.savingsBalance);
-  }
-  
-  if (creditUsed) {
-    creditUsed.textContent = formatCurrency(sampleAccountData.creditUsed);
-  }
-  
-  if (creditAvailable) {
-    const available = sampleAccountData.creditLimit - sampleAccountData.creditUsed;
-    creditAvailable.textContent = formatCurrency(available);
-  }
-  
+  document.getElementById('creditUsed').textContent = 
+      `$${creditBalance.toFixed(2)}`;
+    
+  const available = accountData.credit_balance > 0 ? 0 : -accountData.credit_balance;
+  document.getElementById('creditAvailable').textContent = `$${available.toFixed(2)}`;
+
   // Update credit usage progress bar
   const creditProgressBar = document.getElementById('creditProgressBar');
   if (creditProgressBar) {
-    const percentage = (sampleAccountData.creditUsed / sampleAccountData.creditLimit) * 100;
-    creditProgressBar.style.width = `${percentage}%`;
-    
-    // Change color based on usage
-    if (percentage > 80) {
-      creditProgressBar.className = 'progress-bar bg-danger';
-    } else if (percentage > 50) {
-      creditProgressBar.className = 'progress-bar bg-warning';
-    } else {
-      creditProgressBar.className = 'progress-bar bg-success';
-    }
+      const percentage = Math.min((accountData.credit_balance / 10000) * 100, 100); // Example: assuming a credit limit of 10,000
+      creditProgressBar.style.width = `${percentage}%`;
+
+      // Change color based on usage
+      if (percentage > 80) {
+          creditProgressBar.className = 'progress-bar bg-danger';
+      } else if (percentage > 50) {
+          creditProgressBar.className = 'progress-bar bg-warning';
+      } else {
+          creditProgressBar.className = 'progress-bar bg-success';
+      }
   }
 }
 

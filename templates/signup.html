@@ -262,5 +262,34 @@
       }
     });
   </script>
+  <script>
+  document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const response = await fetch('http://127.0.0.1:5000/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            username: document.getElementById('username').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+        })
+    });
+
+    const data = await response.json();
+
+    if (response.status === 201) {
+        console.log("Signup successful:", data);
+        localStorage.setItem('currentUser', JSON.stringify({
+            id: data.user_id,
+            username: data.username
+        }));
+        window.location.href = '/dashboard';
+    } else {
+        console.error("Signup failed:", data.error);
+        alert(data.error || "Signup failed");
+    }
+});
+</script>
 </body>
 </html>
