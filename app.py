@@ -2,9 +2,11 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, abort, jsonify
 import pymysql
 import bcrypt
+from flask_cors import CORS
 
 # create the app
 app = Flask(__name__, static_folder='static', template_folder='templates')
+CORS(app, supports_credentials=True, resources={r"/api/*": {"origins": "*"}})
 app.secret_key = os.environ.get("SESSION_SECRET", "dev_secret_key")
 
 def connect_to_database():
@@ -142,7 +144,6 @@ def signup():
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.json
-    print("Received login data:", data)
     email = data.get('email')
     password = data.get('password')
 
@@ -152,27 +153,31 @@ def login():
     try:
         connection = connect_to_database()
         with connection.cursor() as cursor:
-            # Fetch user details by email
             cursor.execute("SELECT user_id, username, password FROM users WHERE email = %s", (email,))
             user = cursor.fetchone()
 
-            if user and bcrypt.checkpw(password.encode('utf-8'), user[2].encode('utf-8')):
-                # Password matches
+            if not user:
+                return jsonify({"error": "User not found"}), 404
+
+            # Debug: Print stored hash and input password
+            print("Stored hash:", user[2])
+            print("Input password:", password)
+
+            if bcrypt.checkpw(password.encode('utf-8'), user[2].encode('utf-8')):
                 return jsonify({
                     "message": "Login successful",
                     "user_id": user[0],
                     "username": user[1]
                 }), 200
             else:
-                # Invalid credentials
-                
                 return jsonify({"error": "Invalid credentials"}), 401
 
     except Exception as e:
-        print("here")
-        return jsonify({"error": str(e)}), 500
+        print("Login error:", str(e))
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         connection.close()
+
 
 def get_account_summary(user_id):
     connection = connect_to_database()
@@ -202,6 +207,23 @@ def get_account_summary(user_id):
 def account_summary(user_id):
     summary = get_account_summary(user_id)
     return jsonify(summary)
+
+@app.route('/api/currentUser/<user_id>', methods=['GET'])
+def userName(user_id):
+    try:
+        connection = connect_to_database()
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT username FROM users WHERE user_id = %s", (user_id,))
+            user = cursor.fetchone()
+            if user:
+                return jsonify({"username": user[0]}), 200
+            else:
+                return jsonify({"error": "User not found"}), 404
+    except Exception as e:
+        print("Error fetching username:", str(e))
+        return jsonify({"error": "Internal server error"}), 500
+    finally:
+        connection.close()
 
 if __name__ == "__main__":
     app.run(debug=True)

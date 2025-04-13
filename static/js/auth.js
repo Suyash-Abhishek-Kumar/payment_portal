@@ -41,10 +41,39 @@ function handleLogin(e) {
       return;
     }
     
-    // Check credentials (in a real app this would be a server request)
-    const user = sampleUsers.find(user => 
-      user.email === loginEmail.value && user.password === loginPassword.value
-    );
+    // Check credentials via server request
+    fetch('/api/login', {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+      email: loginEmail.value,
+      password: loginPassword.value
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+      const user = data.user;
+
+      // Store user info in localStorage
+      localStorage.setItem('currentUser', JSON.stringify({
+        id: user.id,
+        name: user.name,
+        email: user.email
+      }));
+
+      // Redirect to dashboard
+      window.location.href = "/dashboard";
+      } else {
+      showError(loginErrorMsg, data.message || "Invalid email or password");
+      }
+    })
+    .catch(error => {
+      console.error('Error during login:', error);
+      showError(loginErrorMsg, "An error occurred. Please try again later.");
+    });
     
     if (user) {
       // Store user info in localStorage
@@ -91,22 +120,40 @@ function handleSignup(e) {
       return;
     }
     
-    // Check if email already exists (in a real app this would be a server request)
-    if (sampleUsers.some(user => user.email === signupEmail.value)) {
-      showError(signupErrorMsg, "Email already in use");
-      return;
-    }
-    
-    // Create new user (in a real app this would be a server request)
-    const newUser = {
-      id: sampleUsers.length + 1,
+    // Create new user via server request
+    fetch('/api/signup', {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
       name: signupName.value,
       email: signupEmail.value,
       password: signupPassword.value
-    };
-    
-    // Add to users array (in a real app this would be saved to a database)
-    sampleUsers.push(newUser);
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+      const newUser = data.user;
+
+      // Store user info in localStorage
+      localStorage.setItem('currentUser', JSON.stringify({
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email
+      }));
+
+      // Redirect to dashboard
+      window.location.href = "/dashboard";
+      } else {
+      showError(signupErrorMsg, data.message || "Email already in use or an error occurred during signup");
+      }
+    })
+    .catch(error => {
+      console.error('Error during signup:', error);
+      showError(signupErrorMsg, "An error occurred. Please try again later.");
+    });
     
     // Store user info in localStorage
     localStorage.setItem('currentUser', JSON.stringify({
@@ -174,7 +221,9 @@ function updateNavigation(isLoggedIn) {
       const userNameElement = document.getElementById('userName');
       if (userNameElement) {
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        userNameElement.textContent = currentUser.name;
+        if (currentUser && currentUser.name) {
+          userNameElement.textContent = currentUser.name;
+        }
       }
     } else {
       authNav.style.display = 'flex';
@@ -185,6 +234,7 @@ function updateNavigation(isLoggedIn) {
 
 // Function to handle logout
 function logout() {
+  console.log('Logout function called');
   localStorage.removeItem('currentUser');
   window.location.href = '/login';
 }
