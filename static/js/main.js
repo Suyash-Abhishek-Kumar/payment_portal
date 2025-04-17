@@ -34,6 +34,15 @@ function formatCurrency(amount) {
   }).format(amount);
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  const navbarUserName = document.getElementById('userName');
+  if (currentUser && navbarUserName) {
+    // Use 'username' or 'name' property depending on your storage
+    navbarUserName.textContent = currentUser.username || currentUser.name || 'User';
+  }
+});
+
 // Helper function to format date
 function formatDate(dateString) {
   const options = { year: 'numeric', month: 'short', day: 'numeric' };

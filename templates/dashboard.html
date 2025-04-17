@@ -354,10 +354,13 @@
     // Update dashboard user name
     document.addEventListener('DOMContentLoaded', function() {
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      const navbarUserName = document.getElementById('userName');
       const dashboardUserName = document.getElementById('dashboardUserName');
-      
-      if (currentUser && dashboardUserName) {
-        dashboardUserName.textContent = currentUser.name;
+
+      if (currentUser) {
+        // Use 'username' property (or whatever you used in localStorage)
+        if (navbarUserName) navbarUserName.textContent = currentUser.username;
+        if (dashboardUserName) dashboardUserName.textContent = currentUser.username;
       }
     });
   </script>

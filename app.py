@@ -1,7 +1,9 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, abort, jsonify
+from flask import Flask, render_template, request, send_file, url_for, abort, jsonify
 import pymysql
+from werkzeug.utils import secure_filename
 import bcrypt
+import io
 from flask_cors import CORS
 
 # create the app
@@ -224,6 +226,60 @@ def userName(user_id):
         return jsonify({"error": "Internal server error"}), 500
     finally:
         connection.close()
+
+@app.route('/api/upload-qr', methods=['POST'])
+def upload_qr():
+    if 'qr_image' not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+    
+    file = request.files['qr_image']
+    if file.filename == '':
+        return jsonify({"error": "Empty filename"}), 400
+    user_id = request.form.get('user_id')
+
+    try:
+        filename = secure_filename(file.filename)
+        mime_type = file.mimetype
+        
+        connection = connect_to_database()
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO user_qr_codes 
+                (user_id, image_data, filename, mime_type)
+                VALUES (%s, %s, %s, %s)
+            """, (user_id, file.read(), filename, mime_type))
+            connection.commit()
+        
+        return jsonify({"message": "QR code uploaded successfully"}), 201
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        connection.close()
+
+@app.route('/api/user-qr/<int:user_id>')
+def get_user_qr(user_id):
+    try:
+        connection = connect_to_database()
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT image_data, mime_type FROM user_qr_codes
+                WHERE user_id = %s
+                ORDER BY uploaded_at DESC
+                LIMIT 1
+            """, (user_id,))
+            qr = cursor.fetchone()
+            if not qr:
+                return '', 404  # Or return a default image
+
+            image_bytes = qr[0]
+            mime_type = qr[1]
+            return send_file(io.BytesIO(image_bytes), mimetype=mime_type)
+    except Exception as e:
+        return str(e), 500
+    finally:
+        connection.close()
+
 
 if __name__ == "__main__":
     app.run(debug=True)

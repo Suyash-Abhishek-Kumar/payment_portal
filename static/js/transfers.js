@@ -218,5 +218,21 @@ function formatCurrency(amount) {
   }).format(amount);
 }
 
+// Function to load QR codes for the user
+async function loadQRCodes(userId) {
+  try {
+      const response = await fetch(`http://localhost:5000/api/qr-codes/${userId}`);
+      const qrCodes = await response.json();
+      
+      qrCodes.forEach(qr => {
+          const img = document.createElement('img');
+          img.src = `data:${qr.mime_type};base64,${btoa(qr.image_data)}`;
+          document.getElementById('qrGallery').appendChild(img);
+      });
+  } catch (error) {
+      console.error('QR load error:', error);
+  }
+}
+
 // Initialize transfers page when DOM is loaded
 document.addEventListener('DOMContentLoaded', initializeTransfersPage);
