@@ -1,20 +1,16 @@
 // Dashboard functionality
 
 // Sample account data (in a real app, this would come from an API)
-const sampleAccountData = {
-  balance: 5432.10,
-  savingsBalance: 7890.45,
-  creditLimit: 10000,
-  creditUsed: 2150.75,
-  recentTransactions: [
-    { id: 1, description: "Coffee Shop", amount: -4.50, date: "2023-06-09", category: "Food & Dining" },
-    { id: 2, description: "Salary Deposit", amount: 2850.00, date: "2023-06-08", category: "Income" },
-    { id: 3, description: "Electric Bill", amount: -85.20, date: "2023-06-07", category: "Utilities" },
-    { id: 4, description: "Grocery Store", amount: -68.35, date: "2023-06-05", category: "Groceries" }
-  ]
+let sampleAccountData = {
+  balance: 0,
+  savingsBalance: 0,
+  creditLimit: 0,
+  creditUsed: 0,
+  recentTransactions: []
 };
 
-// Function to initialize dashboard
+const currentUser = localStorage.getItem('currentUser'); // Get logged-in user info from localStorage
+
 // Function to initialize dashboard
 function initializeDashboard() {
   const currentUser = localStorage.getItem('currentUser'); // Get logged-in user info from localStorage
@@ -41,9 +37,22 @@ function initializeDashboard() {
           console.error('Error:', error);
           alert("Failed to fetch account summary.");
       });
-
-  // Load recent transactions (this can be implemented later)
-  loadRecentTransactions();
+  
+      fetch(`http://127.0.0.1:5000/api/transactions/${userId}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.error(data.error);
+          alert("Error fetching recent transactions: " + data.error);
+        } else {
+          sampleAccountData.recentTransactions = data || []; // Update the transactions
+          loadRecentTransactions(); // Call this after transactions are updated
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert("Failed to fetch recent transactions.");
+      });
 }
 
 // Function to update account summaries dynamically
@@ -100,18 +109,18 @@ function loadRecentTransactions() {
   }
   
   sampleAccountData.recentTransactions.forEach(transaction => {
-    const isPositive = transaction.amount > 0;
+    const isPositive = transaction[1] > 0;
     
     const transactionElement = document.createElement('div');
     transactionElement.className = 'transaction-item';
     transactionElement.innerHTML = `
       <div>
         <i class="fas ${isPositive ? 'fa-arrow-down' : 'fa-arrow-up'} transaction-icon"></i>
-        <span>${transaction.description}</span>
-        <small class="text-muted d-block">${transaction.date}</small>
+        <span>${transaction[2]}</span>
+        <small class="text-muted d-block">${transaction[3]}</small>
       </div>
       <div class="${isPositive ? 'amount-positive' : 'amount-negative'}">
-        ${isPositive ? '+' : ''}${formatCurrency(transaction.amount)}
+        ${isPositive ? '+' : ''}${formatCurrency(transaction[1])}
       </div>
     `;
     
