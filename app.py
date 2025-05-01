@@ -280,6 +280,75 @@ def get_user_qr(user_id):
     finally:
         connection.close()
 
+@app.route('/api/transfers', methods=['POST'])
+def transfer_funds():
+    data = request.json
+    sender_id = data.get('sender_id')
+    receiver_id = data.get('receiver_id')
+    amount = data.get('amount')
+    description = data.get('description', 'Fund Transfer')
+
+    if not all([sender_id, receiver_id, amount]):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    try:
+        connection = connect_to_database()
+        with connection.cursor() as cursor:
+            # Check sender's balance
+            cursor.execute("SELECT main_balance FROM user_accounts WHERE user_id = %s", (sender_id,))
+            sender_balance = cursor.fetchone()['main_balance']
+            if sender_balance < amount:
+                return jsonify({"error": "Insufficient funds"}), 400
+
+            # Deduct from sender
+            cursor.execute("""
+                UPDATE user_accounts
+                SET main_balance = main_balance - %s
+                WHERE user_id = %s
+            """, (amount, sender_id))
+
+            # Add to receiver
+            cursor.execute("""
+                UPDATE user_accounts
+                SET main_balance = main_balance + %s
+                WHERE user_id = %s
+            """, (amount, receiver_id))
+
+            # Record transaction
+            cursor.execute("""
+                INSERT INTO transactions (user_id, amount, description, status)
+                VALUES (%s, %s, %s, 'COMPLETED')
+            """, (sender_id, -amount, description))
+
+            connection.commit()
+            return jsonify({"message": "Transfer successful"}), 200
+
+    except Exception as e:
+        connection.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        connection.close()
+    
+@app.route('/api/transactions/<int:user_id>', methods=['GET'])
+def get_transactions(user_id):
+    try:
+        connection = connect_to_database()
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT t.transaction_id, t.amount, t.description, t.transaction_date, sc.name AS category
+                FROM transactions t
+                LEFT JOIN transaction_category tc ON t.transaction_id = tc.transaction_id
+                LEFT JOIN spending_categories sc ON tc.category_id = sc.category_id
+                WHERE t.user_id = %s
+                ORDER BY t.transaction_date DESC
+            """, (user_id,))
+            transactions = cursor.fetchall()
+            return jsonify(transactions), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        connection.close()
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,21 +1,36 @@
 // Transactions page functionality
 
-// Sample transactions data (in a real app, this would come from an API)
-const sampleTransactions = [
-  { id: 1, description: "Grocery Shopping", amount: -78.45, date: "2023-06-10", category: "Groceries" },
-  { id: 2, description: "Salary Deposit", amount: 2850.00, date: "2023-06-08", category: "Income" },
-  { id: 3, description: "Electric Bill", amount: -85.20, date: "2023-06-07", category: "Utilities" },
-  { id: 4, description: "Gas Station", amount: -45.80, date: "2023-06-07", category: "Transportation" },
-  { id: 5, description: "Restaurant", amount: -32.50, date: "2023-06-06", category: "Food & Dining" },
-  { id: 6, description: "Movie Tickets", amount: -28.75, date: "2023-06-05", category: "Entertainment" },
-  { id: 7, description: "Phone Bill", amount: -65.00, date: "2023-06-04", category: "Utilities" },
-  { id: 8, description: "Freelance Work", amount: 350.00, date: "2023-06-03", category: "Income" },
-  { id: 9, description: "Online Shopping", amount: -124.99, date: "2023-06-02", category: "Shopping" },
-  { id: 10, description: "ATM Withdrawal", amount: -200.00, date: "2023-06-01", category: "Cash" }
-];
+let sampleTransactions = [];
+
+async function fetchTransactions() {
+  const currentUser = localStorage.getItem('currentUser');
+  
+  if (!currentUser) {
+    console.error('No current user found.');
+    return [];
+  }
+
+  try {
+    const user = JSON.parse(currentUser);
+    const response = await fetch(`/api/transactions/${user.id}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch transactions');
+    }
+    sampleTransactions = await response.json();
+    return sampleTransactions;
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    return [];
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const transactions = await fetchTransactions();
+  loadTransactions(transactions);
+});
 
 // Function to initialize transactions page
-function initializeTransactionsPage() {
+async function initializeTransactionsPage() {
   const currentUser = localStorage.getItem('currentUser');
   
   if (!currentUser) {
@@ -23,8 +38,9 @@ function initializeTransactionsPage() {
     return;
   }
   
-  // Load all transactions
-  loadTransactions(sampleTransactions);
+  // Fetch and load all transactions
+  const transactions = await fetchTransactions();
+  loadTransactions(transactions);
   
   // Initialize filter form
   initializeFilters();
@@ -55,18 +71,19 @@ function loadTransactions(transactions) {
   }
   
   transactions.forEach(transaction => {
-    const isPositive = transaction.amount > 0;
+    const isPositive = transaction[1] > 0;
+    console.log(transaction.amount, isPositive);
     
     const transactionElement = document.createElement('div');
     transactionElement.className = 'transaction-item';
     transactionElement.innerHTML = `
       <div>
-        <i class="fas ${getCategoryIcon(transaction.category)} transaction-icon"></i>
-        <span>${transaction.description}</span>
-        <small class="text-muted d-block">${transaction.date} • ${transaction.category}</small>
+        <i class="fas ${getCategoryIcon(transaction[4])} transaction-icon"></i>
+        <span>${transaction[2]}</span>
+        <small class="text-muted d-block">${transaction[3]} • ${transaction[4]}</small>
       </div>
       <div class="${isPositive ? 'amount-positive' : 'amount-negative'}">
-        ${isPositive ? '+' : ''}${formatCurrency(transaction.amount)}
+        ${isPositive ? '+₹' : '₹'}${transaction[1]}
       </div>
     `;
     
@@ -83,17 +100,19 @@ function initializeFilters() {
   // Populate category filter
   const categoryFilter = document.getElementById('categoryFilter');
   if (categoryFilter) {
-    const categories = [...new Set(sampleTransactions.map(t => t.category))];
-    categories.forEach(category => {
-      const option = document.createElement('option');
-      option.value = category;
-      option.textContent = category;
-      categoryFilter.appendChild(option);
+    fetchTransactions().then(transactions => {
+      const categories = [...new Set(transactions.map(t => t.category))];
+      categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        categoryFilter.appendChild(option);
+      });
     });
   }
   
   // Handle filter form submission
-  filterForm.addEventListener('submit', function(e) {
+  filterForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const category = categoryFilter.value;
@@ -101,7 +120,7 @@ function initializeFilters() {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
     
-    let filteredTransactions = [...sampleTransactions];
+    let filteredTransactions = await fetchTransactions();
     
     // Filter by category
     if (category) {
@@ -131,9 +150,10 @@ function initializeFilters() {
   // Reset filters
   const resetButton = document.getElementById('resetFilters');
   if (resetButton) {
-    resetButton.addEventListener('click', function() {
+    resetButton.addEventListener('click', async function() {
       filterForm.reset();
-      loadTransactions(sampleTransactions);
+      const transactions = await fetchTransactions();
+      loadTransactions(transactions);
     });
   }
 }
@@ -144,15 +164,17 @@ function initializeSearch() {
   
   if (!searchInput) return;
   
-  searchInput.addEventListener('input', function() {
+  searchInput.addEventListener('input', async function() {
     const searchTerm = this.value.toLowerCase().trim();
     
     if (!searchTerm) {
-      loadTransactions(sampleTransactions);
+      const transactions = await fetchTransactions();
+      loadTransactions(transactions);
       return;
     }
     
-    const filteredTransactions = sampleTransactions.filter(transaction => 
+    const transactions = await fetchTransactions();
+    const filteredTransactions = transactions.filter(transaction => 
       transaction.description.toLowerCase().includes(searchTerm) ||
       transaction.category.toLowerCase().includes(searchTerm)
     );
@@ -167,9 +189,9 @@ function initializePeriodSelector() {
   
   if (!periodSelector) return;
   
-  periodSelector.addEventListener('change', function() {
+  periodSelector.addEventListener('change', async function() {
     const period = this.value;
-    let filteredTransactions = [...sampleTransactions];
+    let filteredTransactions = await fetchTransactions();
     const today = new Date();
     
     switch(period) {
@@ -224,13 +246,18 @@ function getCategoryIcon(category) {
 }
 
 // Helper function to format currency
-function formatCurrency(amount) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2
-  }).format(amount);
-}
+// function formatCurrency(amount) {
+//   try {
+//     return new Intl.NumberFormat('en-IN', {
+//       style: 'currency',
+//       currency: 'INR',
+//       minimumFractionDigits: 2
+//     }).format(amount);
+//   } catch (error) {
+//     console.error('Currency formatting error:', error);
+//     return `₹${amount.toFixed(2)}`; // Fallback to manual formatting
+//   }
+// }
 
 // Initialize transactions page when DOM is loaded
 document.addEventListener('DOMContentLoaded', initializeTransactionsPage);

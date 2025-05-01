@@ -53,16 +53,16 @@ function updateAccountSummaries(accountData) {
   const creditBalance = parseFloat(accountData.credit_balance) || 0;
 
   document.getElementById('mainBalance').textContent = 
-      `$${mainBalance.toFixed(2)}`;
+      `₹${mainBalance.toFixed(2)}`;
   
   document.getElementById('savingsBalance').textContent = 
-      `$${savingsBalance.toFixed(2)}`;
+      `₹${savingsBalance.toFixed(2)}`;
   
   document.getElementById('creditUsed').textContent = 
-      `$${creditBalance.toFixed(2)}`;
+      `₹${creditBalance.toFixed(2)}`;
     
   const available = accountData.credit_balance > 0 ? 0 : -accountData.credit_balance;
-  document.getElementById('creditAvailable').textContent = `$${available.toFixed(2)}`;
+  document.getElementById('creditAvailable').textContent = `₹${available.toFixed(2)}`;
 
   // Update credit usage progress bar
   const creditProgressBar = document.getElementById('creditProgressBar');
