@@ -72,7 +72,6 @@ function loadTransactions(transactions) {
   
   transactions.forEach(transaction => {
     const isPositive = transaction[1] > 0;
-    console.log(transaction.amount, isPositive);
     
     const transactionElement = document.createElement('div');
     transactionElement.className = 'transaction-item';
@@ -83,7 +82,7 @@ function loadTransactions(transactions) {
         <small class="text-muted d-block">${transaction[3]} • ${transaction[4]}</small>
       </div>
       <div class="${isPositive ? 'amount-positive' : 'amount-negative'}">
-        ${isPositive ? '+₹' : '₹'}${transaction[1]}
+        ${isPositive ? '+₹' : '-₹'}${Math.abs(transaction[1])}
       </div>
     `;
     
