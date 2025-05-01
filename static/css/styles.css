@@ -259,3 +259,7 @@ body {
   margin-bottom: 1rem;
   opacity: 0.5;
 }
+
+.progress-bar {
+  transition: width 0.5s ease-in-out;
+}
