@@ -132,7 +132,7 @@
               <h2 class="mb-3" id="creditUsed">$0.00</h2>
               <p class="mb-0 text-muted">Used from <span id="creditAvailable">$0.00</span></p>
               <div class="progress mt-3" style="height: 8px;">
-                <div class="progress-bar bg-success" id="creditProgressBar" style="width: 25%"></div>
+                <div class="progress-bar bg-success" id="creditProgressBar" style="width: 100%"></div>
               </div>
             </div>
           </div>
@@ -225,103 +225,54 @@
       <div class="row">
         <div class="col-12 mb-4">
           <div class="dashboard-card">
-        <div class="dashboard-card-header">
-          <h5 class="mb-0">Spending Analysis</h5>
-        </div>
-        <div class="dashboard-card-body">
-          <div class="row">
-            <!-- Left: Pie Chart -->
-            <div class="col-lg-3 mb-4 mb-lg-0">
-          <h6 class="text-muted mb-3">Monthly Overview</h6>
-          <canvas id="spendingPieChart" height="200"></canvas>
-            </div>
-            <!-- Right: Spending Details -->
-            <div class="col-lg-6">
-          <h6 class="text-muted mb-5">Top Spending Categories</h6>
-          <div class="d-flex justify-content-between mb-1">
-            <span>Food & Dining</span>
-            <span>$348.52</span>
-          </div>
-          <div class="progress mb-4" style="height: 8px;">
-            <div class="progress-bar bg-primary" style="width: 85%"></div>
-          </div>
-          <div class="d-flex justify-content-between mb-1">
-            <span>Bills & Utilities</span>
-            <span>$280.00</span>
-          </div>
-          <div class="progress mb-4" style="height: 8px;">
-            <div class="progress-bar bg-success" style="width: 70%"></div>
-          </div>
-          <div class="d-flex justify-content-between mb-1">
-            <span>Transportation</span>
-            <span>$185.75</span>
-          </div>
-          <div class="progress mb-4" style="height: 8px;">
-            <div class="progress-bar bg-warning" style="width: 50%"></div>
-          </div>
-          <div class="d-flex justify-content-between mb-1">
-            <span>Shopping</span>
-            <span>$142.99</span>
-          </div>
-          <div class="progress" style="height: 8px;">
-            <div class="progress-bar bg-info" style="width: 35%"></div>
-          </div>
-            </div>
-          </div>
-        </div>
-          </div>
-        </div>
-      </div>
-  
-      
-      <!-- Upcoming Bills -->
-      <div class="row">
-        <div class="col-12 mb-4">
-          <div class="dashboard-card">
             <div class="dashboard-card-header">
-              <h5 class="mb-0">Upcoming Bills</h5>
+              <h5 class="mb-0">Spending Analysis</h5>
             </div>
             <div class="dashboard-card-body">
-              <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th>Bill</th>
-                      <th>Amount</th>
-                      <th>Due Date</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Electricity Bill</td>
-                      <td>$87.45</td>
-                      <td>June 15, 2023</td>
-                      <td><span class="badge bg-warning">Pending</span></td>
-                      <td><button class="btn btn-sm btn-payment-primary">Pay Now</button></td>
-                    </tr>
-                    <tr>
-                      <td>Internet Service</td>
-                      <td>$59.99</td>
-                      <td>June 18, 2023</td>
-                      <td><span class="badge bg-warning">Pending</span></td>
-                      <td><button class="btn btn-sm btn-payment-primary">Pay Now</button></td>
-                    </tr>
-                    <tr>
-                      <td>Phone Bill</td>
-                      <td>$45.00</td>
-                      <td>June 22, 2023</td>
-                      <td><span class="badge bg-warning">Pending</span></td>
-                      <td><button class="btn btn-sm btn-payment-primary">Pay Now</button></td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div class="row">
+                <!-- Left: Dynamic Pie Chart -->
+                <div class="col-lg-3 mb-4 mb-lg-0">
+                  <h6 class="text-muted mb-3">Monthly Overview</h6>
+                  <div id="spendingChartContainer">
+                  <!-- The canvas will be dynamically added by JavaScript -->
+                  </div>
+                </div>
+                
+                <!-- Right: Dynamic Spending Details -->
+                <div class="col-lg-6" id="topSpendingCategories">
+                  <h6 class="text-muted mb-5">Top Spending Categories</h6>
+                  <!-- Content will be populated by JavaScript -->
+                  <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Upcoming Bills Section -->
+      <div class="col-12"></div>
+      <div class="dashboard-card">
+        <div class="dashboard-card-header">
+          <h4 class="mb-0">Upcoming Bills</h4>
+        </div>
+          <div class="card-body">
+        <div id="upcomingBills">
+          <!-- Bills will be loaded here -->
+          <div class="text-center p-3">
+            <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
