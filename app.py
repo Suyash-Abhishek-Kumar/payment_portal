@@ -94,7 +94,6 @@ def not_found(error):
 @app.route('/api/signup', methods=['POST'])
 def signup():
     data = request.json
-    print("Received signup data:", data)
     username = data.get('username')
     email = data.get('email')
     password = data.get('password')
@@ -280,34 +279,52 @@ def get_user_qr(user_id):
     finally:
         connection.close()
 
+from decimal import Decimal
+
 @app.route('/api/transfers', methods=['POST'])
 def transfer_funds():
     data = request.json
     sender_id = data.get('sender_id')
     receiver_id = data.get('receiver_id')
     amount = data.get('amount')
+    account_type = data.get('account_type', 'main')  # 'main', 'savings', or 'credit'
     description = data.get('description', 'Fund Transfer')
 
     if not all([sender_id, receiver_id, amount]):
         return jsonify({"error": "Missing required fields"}), 400
 
     try:
+        amount = Decimal(str(amount))
+        if amount <= 0:
+            return jsonify({"error": "Amount must be positive"}), 400
+    except:
+        return jsonify({"error": "Invalid amount"}), 400
+
+    # Map account_type to the correct column
+    balance_columns = {
+        'main': 'main_balance',
+        'savings': 'savings_balance',
+        'credit': 'credit_balance'
+    }
+    if account_type not in balance_columns:
+        return jsonify({"error": "Invalid account type"}), 400
+
+    column = balance_columns[account_type]
+
+    try:
         connection = connect_to_database()
         with connection.cursor() as cursor:
-            # Check sender's balance
-            cursor.execute("SELECT main_balance FROM user_accounts WHERE user_id = %s", (sender_id,))
-            sender_balance = cursor.fetchone()['main_balance']
+            # Check sender's balance for the selected account
+            cursor.execute(f"SELECT {column} FROM user_accounts WHERE user_id = %s", (sender_id,))
+            result = cursor.fetchone()
+            if not result:
+                return jsonify({"error": "Sender not found"}), 404
+            sender_balance = result[0]
+
             if sender_balance < amount:
                 return jsonify({"error": "Insufficient funds"}), 400
 
-            # Deduct from sender
-            cursor.execute("""
-                UPDATE user_accounts
-                SET main_balance = main_balance - %s
-                WHERE user_id = %s
-            """, (amount, sender_id))
-
-            # Add to receiver
+            # Add to receiver's main balance
             cursor.execute("""
                 UPDATE user_accounts
                 SET main_balance = main_balance + %s
@@ -344,6 +361,68 @@ def get_transactions(user_id):
             """, (user_id,))
             transactions = cursor.fetchall()
             return jsonify(transactions), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        connection.close()
+
+@app.route('/api/bills/<int:user_id>', methods=['GET'])
+def get_upcoming_bills(user_id):
+    try:
+        connection = connect_to_database()
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT bill_id, bill_type, due_date, amount 
+                FROM user_bills 
+                WHERE user_id = %s AND is_paid = FALSE
+                ORDER BY due_date ASC
+            """, (user_id,))
+            bills = cursor.fetchall()
+            return jsonify(bills), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        connection.close()
+
+# Change this route
+@app.route('/api/bills/<int:bill_id>/pay', methods=['POST'])  # 👈 Updated URL
+def mark_bill_paid(bill_id):
+    try:
+        connection = connect_to_database()
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                UPDATE user_bills 
+                SET is_paid = TRUE 
+                WHERE bill_id = %s
+            """, (bill_id,))
+            
+            connection.commit()
+            return jsonify({"message": "Bill marked as paid"}), 200
+    except Exception as e:
+        connection.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        connection.close()
+
+@app.route('/api/spending-analysis/<int:user_id>', methods=['GET'])
+def get_spending_analysis(user_id):
+    try:
+        connection = connect_to_database()
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT sc.name AS category, 
+                       SUM(ABS(t.amount)) AS total_spent
+                FROM transactions t
+                JOIN transaction_category tc ON t.transaction_id = tc.transaction_id
+                JOIN spending_categories sc ON tc.category_id = sc.category_id
+                WHERE t.user_id = %s AND t.amount < 0
+                GROUP BY sc.name
+                ORDER BY total_spent DESC
+            """, (user_id,))
+            
+            result = cursor.fetchall()
+            return jsonify(result), 200
+            
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:

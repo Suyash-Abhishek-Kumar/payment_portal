@@ -159,10 +159,11 @@
           <!-- From Account -->
           <div class="mb-4">
             <label for="fromAccount" class="form-label">From Account</label>
+            <!-- From Account Dropdown -->
             <select class="form-select" id="fromAccount">
-              <option value="checking">Main Account - $5,432.10</option>
-              <option value="savings">Savings Account - $7,890.45</option>
-              <option value="credit">Credit Card - $7,849.25 available</option>
+              <option value="main">Main Account</option>
+              <option value="savings">Savings Account</option>
+              <option value="credit">Credit Card</option>
             </select>
           </div>
           
@@ -215,7 +216,7 @@
           <div class="mb-4">
             <label for="transferAmount" class="form-label">Amount</label>
             <div class="input-group">
-              <span class="input-group-text">$</span>
+              <span class="input-group-text">₹</span>
               <input type="number" class="form-control" id="transferAmount" placeholder="0.00" min="0.01" step="0.01" required>
             </div>
           </div>
@@ -249,7 +250,7 @@
           <!-- Buttons -->
           <div class="d-grid gap-2 d-md-flex justify-content-md-end">
             <button type="button" class="btn btn-outline-secondary" id="resetTransferForm">Clear</button>
-            <button type="submit" class="btn btn-payment-primary">Send Money</button>
+            <button type="submit" class="btn btn-primary">Send Money</button>
           </div>
         </form>
       </div>
