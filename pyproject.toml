@@ -6,9 +6,10 @@ authors = ["Suyash Abhishek Kumar <suyash.a.kumar@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = ">=3.11"
-email-validator = ">=2.2.0"
-flask-login = ">=0.6.3"
 flask = ">=3.1.0"
+flask-cors = ">=3.0.10"
+flask-login = ">=0.6.3"
+email-validator = ">=2.2.0"
 flask-sqlalchemy = ">=3.1.1"
 gunicorn = ">=23.0.0"
 psycopg2-binary = ">=2.9.10"
