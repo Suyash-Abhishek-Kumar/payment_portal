@@ -26,26 +26,11 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <!-- Main Navigation (shown when logged in) -->
         <ul class="navbar-nav ms-auto" id="mainNav" style="display: none;">
-          <li class="nav-item">
-            <a class="nav-link" href="/dashboard">
-              <i class="fas fa-tachometer-alt me-1"></i> Dashboard
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/transactions">
-              <i class="fas fa-exchange-alt me-1"></i> Transactions
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/transfers">
-              <i class="fas fa-paper-plane me-1"></i> Transfers
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/settings">
-              <i class="fas fa-cog me-1"></i> Settings
-            </a>
-          </li>
+          <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-1"></i> Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="/transactions"><i class="fas fa-exchange-alt me-1"></i> Transactions</a></li>
+          <li class="nav-item"><a class="nav-link" href="/transfers"><i class="fas fa-paper-plane me-1"></i> Transfers</a></li>
+          <li class="nav-item"><a class="nav-link" href="/settings"><i class="fas fa-cog me-1"></i> Settings</a></li>
+          <li class="nav-item"><a class="nav-link" href="/users"><i class="fas fa-users me-1"></i> Users</a></li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
               <i class="fas fa-user-circle me-1"></i> <span id="userName">User</span>
@@ -57,15 +42,11 @@
             </ul>
           </li>
         </ul>
-        
+
         <!-- Auth Navigation (shown when logged out) -->
         <ul class="navbar-nav ms-auto" id="authNav">
-          <li class="nav-item">
-            <a class="nav-link active" href="/login">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/signup">Sign Up</a>
-          </li>
+          <li class="nav-item"><a class="nav-link active" href="/login">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="/signup">Sign Up</a></li>
         </ul>
       </div>
     </div>
@@ -77,12 +58,12 @@
       <div class="auth-container">
         <h2 class="text-center mb-4">Welcome Back</h2>
         <p class="text-center text-muted mb-4">Enter your credentials to access your account</p>
-        
+
         <!-- Login Form -->
         <form id="loginForm">
           <!-- Error message container -->
           <div class="error-message" id="loginErrorMsg" style="display: none;"></div>
-          
+
           <!-- Email input -->
           <div class="mb-3">
             <label for="loginEmail" class="form-label">Email address</label>
@@ -91,7 +72,7 @@
               <input type="email" class="form-control" id="loginEmail" placeholder="name@example.com" required>
             </div>
           </div>
-          
+
           <!-- Password input -->
           <div class="mb-3">
             <label for="loginPassword" class="form-label">Password</label>
@@ -103,7 +84,18 @@
               </button>
             </div>
           </div>
-          
+
+          <!-- Captcha -->
+          <div class="mb-3">
+            <label class="form-label">Captcha</label>
+            <div id="captchaTable" class="d-flex gap-2 mb-2" data-captcha=""></div>
+            <div class="input-group">
+              <input type="text" id="captchaInput" class="form-control" placeholder="Enter Captcha" required />
+              <button type="button" class="btn btn-outline-primary" id="refreshButton">Refresh</button>
+            </div>
+            <p id="resultMessage" class="small mt-2 mb-0"></p>
+          </div>
+
           <!-- Remember me & forgot password -->
           <div class="d-flex justify-content-between mb-4">
             <div class="form-check">
@@ -112,18 +104,18 @@
             </div>
             <a href="javascript:void(0);" class="text-decoration-none">Forgot password?</a>
           </div>
-          
+
           <!-- Submit button -->
           <div class="d-grid">
             <button type="submit" class="btn btn-payment-primary btn-lg">Login</button>
           </div>
         </form>
-        
+
         <!-- Divider -->
         <div class="my-4 text-center">
           <span class="text-muted">or login with</span>
         </div>
-        
+
         <!-- Social login buttons -->
         <div class="row gy-2">
           <div class="col-sm-6">
@@ -137,7 +129,7 @@
             </a>
           </div>
         </div>
-        
+
         <!-- Sign up link -->
         <div class="mt-4 text-center">
           <span class="text-muted">Don't have an account?</span>
@@ -168,13 +160,13 @@
   <!-- Custom JS -->
   <script src="/static/js/auth.js"></script>
   <script src="/static/js/main.js"></script>
-  
+
   <script>
     // Toggle password visibility
     document.getElementById('togglePassword').addEventListener('click', function() {
-      const passwordInput = document.getElementById('password');
+      const passwordInput = document.getElementById('loginPassword');
       const icon = this.querySelector('i');
-      
+
       if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
         icon.classList.remove('fa-eye');
@@ -186,37 +178,91 @@
       }
     });
   </script>
-  <script>
-    // Login API
-  document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
 
-    try {
-        const response = await fetch('http://localhost:5000/api/login', {
+  <!-- Captcha + Login Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const captchaTable = document.getElementById('captchaTable');
+      const captchaInput = document.getElementById('captchaInput');
+      const refreshButton = document.getElementById('refreshButton');
+      const resultMessage = document.getElementById('resultMessage');
+
+      function generateRandomString(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < length; i++) {
+          result += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        return result;
+      }
+
+      function generateCaptchaTable() {
+        const captchaText = generateRandomString(6);
+        captchaTable.dataset.captcha = captchaText;
+        captchaTable.innerHTML = '';
+        for (let i = 0; i < captchaText.length; i++) {
+          const cell = document.createElement('div');
+          cell.textContent = captchaText.charAt(i);
+          cell.className = 'border border-secondary text-center fw-bold fs-4 px-2';
+          captchaTable.appendChild(cell);
+        }
+      }
+
+      refreshButton.addEventListener('click', () => {
+        generateCaptchaTable();
+        captchaInput.value = '';
+        resultMessage.textContent = '';
+        resultMessage.className = '';
+      });
+
+      generateCaptchaTable();
+
+      document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const userCaptcha = captchaInput.value.trim().toLowerCase();
+        const actualCaptcha = captchaTable.dataset.captcha.trim().toLowerCase();
+        let captchaDone = true;
+
+        if (userCaptcha !== actualCaptcha) {
+          resultMessage.textContent = 'Incorrect Captcha. Please try again.';
+          resultMessage.className = 'text-danger small';
+          generateCaptchaTable();
+          captchaInput.value = '';
+          captchaDone = false;
+          return;
+        }
+
+        resultMessage.textContent = 'Captcha verified!';
+        resultMessage.className = 'text-success small';
+
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        try {
+          const response = await fetch('http://localhost:5000/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-        });
+            body: JSON.stringify({ email, password, captchaDone })
+          });
 
-        const data = await response.json();
-        
-        if (response.ok) {
+          const data = await response.json();
+
+          if (response.ok) {
             localStorage.setItem('currentUser', JSON.stringify({
-                id: data.user_id,
-                username: data.username
+              id: data.user_id,
+              username: data.username
             }));
             window.location.href = '/dashboard';
-        } else {
+          } else {
             alert(data.error || "Login failed");
+          }
+        } catch (error) {
+          console.error('Login error:', error);
+          alert("Failed to connect to server");
         }
-    } catch (error) {
-        console.error('Login error:', error);
-        alert("Failed to connect to server");
-    }
-});
-</script>
+      });
+    });
+  </script>
 </body>
 </html>

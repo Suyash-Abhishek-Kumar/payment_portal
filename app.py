@@ -147,6 +147,7 @@ def login():
     data = request.json
     email = data.get('email')
     password = data.get('password')
+    captcha = data.get('captchaDone')
 
     if not email or not password:
         return jsonify({"error": "Email and password required"}), 400
@@ -163,8 +164,8 @@ def login():
             # Debug: Print stored hash and input password
             print("Stored hash:", user[2])
             print("Input password:", password)
-
-            if bcrypt.checkpw(password.encode('utf-8'), user[2].encode('utf-8')):
+            print("Captcha status:", captcha)
+            if bcrypt.checkpw(password.encode('utf-8'), user[2].encode('utf-8')) and captcha:
                 return jsonify({
                     "message": "Login successful",
                     "user_id": user[0],

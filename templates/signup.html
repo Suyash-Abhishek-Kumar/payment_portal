@@ -46,6 +46,11 @@
               <i class="fas fa-cog me-1"></i> Settings
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/users">
+              <i class="fas fa-users me-1"></i> Users
+            </a>
+          </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
               <i class="fas fa-user-circle me-1"></i> <span id="userName">User</span>
@@ -122,6 +127,17 @@
               <span class="input-group-text"><i class="fas fa-lock"></i></span>
               <input type="password" class="form-control" id="signupConfirmPassword" placeholder="Confirm your password" required>
             </div>
+          </div>
+
+          <!-- Captcha -->
+          <div class="mb-4">
+            <label for="captchaInput" class="form-label">Captcha</label>
+            <div class="d-flex align-items-center">
+              <div id="captchaTable" class="d-flex justify-content-center align-items-center me-3"></div>
+              <button type="button" id="refreshButton" class="btn btn-outline-secondary">Refresh</button>
+            </div>
+            <input type="text" class="form-control mt-2" id="captchaInput" placeholder="Enter Captcha" required>
+            <small id="captchaError" class="text-danger d-none">Incorrect Captcha. Please try again.</small>
           </div>
           
           <!-- Terms and conditions checkbox -->
@@ -256,35 +272,87 @@
         }
       }
     });
-  </script>
-  <script>
-  document.getElementById('signupForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
 
-    const response = await fetch('http://127.0.0.1:5000/api/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+    // Captcha functionality
+    document.addEventListener('DOMContentLoaded', function () {
+      const captchaTable = document.getElementById('captchaTable');
+      const captchaInput = document.getElementById('captchaInput');
+      const refreshButton = document.getElementById('refreshButton');
+      const captchaError = document.getElementById('captchaError');
+      const signupForm = document.getElementById('signupForm');
+
+      // Generate the initial Captcha
+      generateCaptchaTable();
+
+      // Event listener for the Refresh button
+      refreshButton.addEventListener('click', function () {
+        generateCaptchaTable();
+        captchaError.classList.add('d-none');
+      });
+
+      // Function to generate a random string for the Captcha
+      function generateRandomString(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < length; i++) {
+          result += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        return result;
+      }
+
+      // Function to generate the Captcha table
+      function generateCaptchaTable() {
+        const captchaText = generateRandomString(6);
+        captchaTable.dataset.captcha = captchaText;
+        captchaTable.innerHTML = '';
+        for (let i = 0; i < captchaText.length; i++) {
+          const cell = document.createElement('div');
+          cell.textContent = captchaText.charAt(i);
+          cell.classList.add('border', 'border-secondary', 'text-center', 'fw-bold', 'p-2', 'me-1');
+          captchaTable.appendChild(cell);
+        }
+      }
+
+      // Modify the form submission to include Captcha validation
+      signupForm.addEventListener('submit', async (e) => {
+        const inputText = captchaInput.value.trim().toLowerCase();
+        const captchaText = captchaTable.dataset.captcha.trim().toLowerCase();
+
+        if (inputText !== captchaText) {
+          e.preventDefault();
+          captchaError.classList.remove('d-none');
+          captchaInput.value = '';
+          generateCaptchaTable();
+          return;
+        }
+
+        captchaError.classList.add('d-none');
+        // Proceed with the original form submission logic
+        const response = await fetch('http://127.0.0.1:5000/api/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
             username: document.getElementById('signupName').value,
             email: document.getElementById('signupEmail').value,
             password: document.getElementById('signupPassword').value
-        })
-    });
+          })
+        });
 
-    const data = await response.json();
+        const data = await response.json();
 
-    if (response.status === 201) {
-        console.log("Signup successful:", data);
-        localStorage.setItem('currentUser', JSON.stringify({
+        if (response.status === 201) {
+          console.log("Signup successful:", data);
+          localStorage.setItem('currentUser', JSON.stringify({
             id: data.user_id,
             username: data.username
-        }));
-        window.location.href = '/dashboard';
-    } else {
-        console.error("Signup failed:", data.error);
-        alert(data.error || "Signup failed");
-    }
-});
-</script>
+          }));
+          window.location.href = '/dashboard';
+        } else {
+          console.error("Signup failed:", data.error);
+          alert(data.error || "Signup failed");
+        }
+      });
+    });
+  </script>
 </body>
 </html>
