@@ -1,7 +1,7 @@
 // Sample recipients data (in a real app, this would come from an API)
 const sampleRecipients = [
   { id: 7, name: "Alice Smith", accountNumber: "4587******9012", bank: "Chase Bank", recentTransfer: true },
-  {id: 11, name: "Event Master", accountNumber: "1234******5678", bank: "Bank of India", recentTransfer: true},
+  {id: 10, name: "Event Master", accountNumber: "1234******5678", bank: "Bank of India", recentTransfer: true},
   { id: 2, name: "Bob Johnson", accountNumber: "3256******7891", bank: "Bank of America", recentTransfer: true },
   { id: 3, name: "Carol Williams", accountNumber: "7812******3456", bank: "Wells Fargo", recentTransfer: true },
   { id: 4, name: "David Brown", accountNumber: "9145******6789", bank: "Citibank", recentTransfer: false },

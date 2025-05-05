@@ -124,7 +124,7 @@ function loadRecentTransactions() {
         <small class="text-muted d-block">${transaction[3]}</small>
       </div>
       <div class="${isPositive ? 'amount-positive' : 'amount-negative'}">
-        ${isPositive ? '+' : ''}${formatCurrency(transaction[1])}
+        ${isPositive ? '+₹' : '-₹'}${(Math.abs(transaction[1])).toFixed(2)}
       </div>
     `;
     
@@ -206,9 +206,9 @@ function updateSpendingChart() {
 
 // Helper function to format currency
 function formatCurrency(amount) {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'INR',
     minimumFractionDigits: 2
   }).format(amount);
 }

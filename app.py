@@ -147,7 +147,6 @@ def login():
     data = request.json
     email = data.get('email')
     password = data.get('password')
-    captcha = data.get('captchaDone')
 
     if not email or not password:
         return jsonify({"error": "Email and password required"}), 400
@@ -164,8 +163,7 @@ def login():
             # Debug: Print stored hash and input password
             print("Stored hash:", user[2])
             print("Input password:", password)
-            print("Captcha status:", captcha)
-            if bcrypt.checkpw(password.encode('utf-8'), user[2].encode('utf-8')) and captcha:
+            if bcrypt.checkpw(password.encode('utf-8'), user[2].encode('utf-8')):
                 return jsonify({
                     "message": "Login successful",
                     "user_id": user[0],
@@ -316,6 +314,7 @@ def transfer_funds():
         connection = connect_to_database()
         with connection.cursor() as cursor:
             # Check sender's balance for the selected account
+            cursor.execute(f"SELECT main_balance FROM user_accounts WHERE user_id = %s FOR UPDATE;", (sender_id,))
             cursor.execute(f"SELECT {column} FROM user_accounts WHERE user_id = %s", (sender_id,))
             result = cursor.fetchone()
             if not result:
